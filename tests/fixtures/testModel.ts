@@ -1,4 +1,4 @@
-import { Deprecated, Extension } from '@tsoa/runtime';
+import { Deprecated, Extension, IsDouble, IsFloat, IsInt, IsLong } from '@tsoa/runtime';
 
 /**
  * This is a description of a model
@@ -755,6 +755,14 @@ export class TestClassModel extends TestClassBaseModel {
   @Extension('x-key-1', 'value-1')
   @Extension('x-key-2', 'value-2')
   public extensionTest?: boolean;
+  @IsInt()
+  public intAnnotated: number;
+  @IsLong()
+  public longAnnotated: number;
+  @IsDouble()
+  public doubleAnnotated: number;
+  @IsFloat()
+  public floatAnnotated: number;
 
   /**
    * @param publicConstructorVar This is a description for publicConstructorVar

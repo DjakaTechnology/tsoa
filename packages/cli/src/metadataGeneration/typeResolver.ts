@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import { getJSDocComment, getJSDocTagNames, isExistJSDocTag } from './../utils/jsDocUtils';
-import { getDecorators, isDecorator } from './../utils/decoratorUtils';
+import { getDecorators, getNodeFirstDecoratorName, isDecorator } from './../utils/decoratorUtils';
 import { getPropertyValidators } from './../utils/validatorUtils';
 import { GenerateMetadataError } from './exceptions';
 import { getInitializerValue } from './initializer-value';
@@ -399,20 +399,25 @@ export class TypeResolver {
         return { dataType: 'double' };
       }
 
-      const tags = getJSDocTagNames(parentNode).filter(name => {
+      const tagsDecorator = getNodeFirstDecoratorName(parentNode, identifier => {
+        return ['IsInt', 'IsLong', 'IsFloat', 'IsDouble'].some(m => m === identifier.text);
+      });
+      const tagsJSDoc = getJSDocTagNames(parentNode).filter(name => {
         return ['isInt', 'isLong', 'isFloat', 'isDouble'].some(m => m === name);
       });
-      if (tags.length === 0) {
-        return { dataType: 'double' };
-      }
 
+      const tags = tagsDecorator ? [tagsDecorator] : tagsJSDoc;
       switch (tags[0]) {
+        case 'IsInt':
         case 'isInt':
           return { dataType: 'integer' };
+        case 'IsLong':
         case 'isLong':
           return { dataType: 'long' };
+        case 'IsFloat':
         case 'isFloat':
           return { dataType: 'float' };
+        case 'IsDouble':
         case 'isDouble':
           return { dataType: 'double' };
         default:

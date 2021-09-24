@@ -7,6 +7,7 @@ export * from './decorators/operationid';
 export * from './decorators/route';
 export * from './decorators/security';
 export * from './decorators/extension';
+export * from './decorators/isType';
 export * from './interfaces/controller';
 export * from './interfaces/response';
 export * from './interfaces/iocModule';
