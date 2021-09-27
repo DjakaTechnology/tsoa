@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import { getJSDocComment, getJSDocTagNames, isExistJSDocTag } from './../utils/jsDocUtils';
-import { getDecorators, isDecorator } from './../utils/decoratorUtils';
+import { getDecorators, getDecoratorValues, isDecorator } from './../utils/decoratorUtils';
 import { getPropertyValidators } from './../utils/validatorUtils';
 import { GenerateMetadataError } from './exceptions';
 import { getInitializerValue } from './initializer-value';
@@ -1106,17 +1106,27 @@ export class TypeResolver {
   }
 
   private getNodeExample(node: UsableDeclaration | ts.PropertyDeclaration | ts.ParameterDeclaration | ts.EnumDeclaration) {
-    const example = getJSDocComment(node, 'example');
+    const exampleJSDoc = getJSDocComment(node, 'example');
+    const exampleDecorator = this.getDecoratorsByIdentifier(node, 'Example');
 
-    if (example) {
+    if (exampleJSDoc) {
       try {
-        return JSON.parse(example);
+        return JSON.parse(exampleJSDoc);
       } catch {
         return undefined;
       }
-    } else {
-      return undefined;
     }
+
+    if (exampleDecorator) {
+      const decoratorValues = exampleDecorator.map(exampleDecorator => getDecoratorValues(exampleDecorator, this.current.typeChecker)?.[0]);
+      if (decoratorValues.length === 1) {
+        return decoratorValues[0];
+      } else if (decoratorValues.length !== 0) {
+        return decoratorValues;
+      }
+    }
+
+    return undefined;
   }
 
   private getNodeExtension(node: UsableDeclaration | ts.PropertyDeclaration | ts.ParameterDeclaration | ts.EnumDeclaration) {
