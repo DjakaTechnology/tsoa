@@ -1,4 +1,4 @@
-import { Deprecated, Extension } from '@tsoa/runtime';
+import { Deprecated, Example, Extension } from '@tsoa/runtime';
 
 /**
  * This is a description of a model
@@ -755,6 +755,16 @@ export class TestClassModel extends TestClassBaseModel {
   @Extension('x-key-1', 'value-1')
   @Extension('x-key-2', 'value-2')
   public extensionTest?: boolean;
+  @Example('stringValue')
+  public stringExample?: string;
+  @Example({
+    id: 1,
+    label: 'labelValue',
+  })
+  public objectExample?: {
+    id: number;
+    label: string;
+  };
 
   /**
    * @param publicConstructorVar This is a description for publicConstructorVar
